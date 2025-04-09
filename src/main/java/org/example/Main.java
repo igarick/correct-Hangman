@@ -48,17 +48,17 @@ public class Main {
 
     // получить новое слово
     public static String getRandomWord() throws FileNotFoundException {    //getNewWord -> getRandomWord
-        File file = new File("words");
-        Scanner scanner = new Scanner(file);
+        File dictionaryPath = new File("dictionary"); //file -> dictionaryPath
+        Scanner scanner = new Scanner(dictionaryPath);
 
-        List<String> words = new ArrayList<>();
+        List<String> dictionary = new ArrayList<>(); //words -> dictionary
         while (scanner.hasNext()) {
-            words.add(scanner.next());
+            dictionary.add(scanner.next());
         }
         scanner.close();
 
-        int indexOfRandomWord = random.nextInt(words.size());
-        randomWord = words.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
+        int indexOfRandomWord = random.nextInt(dictionary.size());
+        randomWord = dictionary.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
 
       //  newWordNew = randomWord;
         return randomWord;
@@ -80,17 +80,17 @@ public class Main {
     public static void gameLoop(String newWord) {
 
         do {
-            String newLetter = inputLetter();   //newLetter -> letter
-            boolean check = checkLetterInWord(newLetter, newWord);
+            String letter = inputLetter();   //newLetter -> letter
+            boolean check = checkLetterInWord(letter, newWord);
 
             countNumberMistakes(check);
-            determineOccurrencesLetter(check, newLetter);
+            determineOccurrencesLetter(check, letter);
 
             printWord();
             printNoLetter(check);
             printImageVisel(check);
 
-            addLetter(newLetter);
+            addLetter(letter);
 
             boolean checkState = checkStateWord();
 
