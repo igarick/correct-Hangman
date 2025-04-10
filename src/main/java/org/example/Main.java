@@ -9,9 +9,13 @@ public class Main {
     public static Random random = new Random();
     public static Scanner scanner = new Scanner(System.in);
     private static String randomWord;
-    private static int sumMistakes = 0;
+    private static int numberMistakes = 0;     //sumMistakes
     private static String[] secretWord;
     private static final StringBuilder enteredLetters = new StringBuilder();
+
+    public static final char HIDDEN_LETTER = '*';
+
+
 
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -41,7 +45,8 @@ public class Main {
     public static void startGame() throws FileNotFoundException {
         System.out.println("Начало игры");
         String word = getRandomWord();   //String newWord -> randomWord
-        maskWord(word);
+        setMaskWord();
+        printMaskWord();
 
         gameLoop(word);
     }
@@ -51,29 +56,32 @@ public class Main {
         File dictionaryPath = new File("dictionary"); //file -> dictionaryPath
         Scanner scanner = new Scanner(dictionaryPath);
 
-        List<String> dictionary = new ArrayList<>(); //words -> dictionary
+        List<String> dictionaryList = new ArrayList<>(); //words -> dictionaryList
         while (scanner.hasNext()) {
-            dictionary.add(scanner.next());
+            dictionaryList.add(scanner.next());
         }
         scanner.close();
 
-        int indexOfRandomWord = random.nextInt(dictionary.size());
-        randomWord = dictionary.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
+        int indexOfRandomWord = random.nextInt(dictionaryList.size());
+        randomWord = dictionaryList.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
 
-      //  newWordNew = randomWord;
         return randomWord;
     }
 
     // зашифровать новое слово и вывести на экран
-    public static void maskWord(String randomWord) {   //String newWord -> randomWord
-
-        String maskWord = "*".repeat(randomWord.length());  //maskNewWord -> maskWord
-
+    public static void setMaskWord() {   //String newWord -> randomWord
         secretWord = new String[randomWord.length()];
+
         for (int i = 0; i < secretWord.length; i++) {
-            secretWord[i] = "*";
+            secretWord[i] = Character.toString(HIDDEN_LETTER);
         }
-        System.out.println(maskWord);
+    }
+
+    public static void printMaskWord(){
+        for(String s : secretWord) {
+            System.out.print(s);
+        }
+        System.out.println();
     }
 
     // game
@@ -81,14 +89,14 @@ public class Main {
 
         do {
             String letter = inputLetter();   //newLetter -> letter
-            boolean check = checkLetterInWord(letter, newWord);
+            boolean check = checkLetterInRandomWord(letter);
 
             countNumberMistakes(check);
             determineOccurrencesLetter(check, letter);
 
             printWord();
-            printNoLetter(check);
-            printImageVisel(check);
+            printIfNoLetter(check);
+            printImageGallows(check);
 
             addLetter(letter);
 
@@ -97,14 +105,14 @@ public class Main {
             if (checkState) {
                 resetLettersAndMistakes();
                 System.out.println("Вы выйграли");
-                System.out.println("");
+                System.out.println();
                 return;
             }
-            if (sumMistakes == 6) {
+            if (numberMistakes == 6) {
                 resetLettersAndMistakes();
                 System.out.println("Увы, мой друг, Вы проиграли");
                 System.out.println("Загаданное слово: " + randomWord);
-                System.out.println("");
+                System.out.println();
                 return;
             }
 
@@ -132,26 +140,26 @@ public class Main {
         if (length == 0) {
             enteredLetters.append(newLetter);
             System.out.println("Вы ввели буквы: " + enteredLetters);
-            System.out.println("");
+            System.out.println();
         } else {
             enteredLetters.append(", ");
             enteredLetters.append(newLetter);
             System.out.println("Вы ввели буквы: " + enteredLetters);
-            System.out.println("");
+            System.out.println();
         }
     }
 
     // есть ли буква в слове
-    public static boolean checkLetterInWord(String newLetter, String newWord) {
-        char a = newLetter.charAt(0);
-        for (char c : newWord.toCharArray()) {
+    public static boolean checkLetterInRandomWord(String letter) { //String newLetter, String newWord, boolean checkLetterInWord
+        char a = letter.charAt(0);
+        for (char c : randomWord.toCharArray()) {
             if (a == c) return true;
         }
         return false;
     }
 
     //такой буквы нет
-    public static void printNoLetter(boolean letterInWord) {
+    public static void printIfNoLetter(boolean letterInWord) {    //printNoLetter
         if (!letterInWord)
             System.out.println("Такой буквы нет!");
     }
@@ -159,13 +167,13 @@ public class Main {
     // подсчет количества ошибок
     public static void countNumberMistakes(boolean isMistake) {
         if (!isMistake) {
-            sumMistakes++;
+            numberMistakes++;
         }
     }
 
     // - буквы нет в слове - печатать виселицу
-    public static void printImageVisel(boolean checkLetterInWord) {
-        if (!checkLetterInWord && sumMistakes == 1) {
+    public static void printImageGallows(boolean checkLetterInWord) {
+        if (!checkLetterInWord && numberMistakes == 1) {
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
                     {'|', ' ', ' ', ' ', 'O', ' '},
@@ -180,8 +188,8 @@ public class Main {
                 }
                 System.out.println("");
             }
-            System.out.println("У вас осталось попыток: " + (6 - sumMistakes));
-        } else if (!checkLetterInWord && sumMistakes == 2) {
+            System.out.println("У вас осталось попыток: " + (6 - numberMistakes));
+        } else if (!checkLetterInWord && numberMistakes == 2) {
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
                     {'|', ' ', ' ', ' ', 'O', ' '},
@@ -196,8 +204,8 @@ public class Main {
                 }
                 System.out.println("");
             }
-            System.out.println("У вас осталось попыток: " + (6 - sumMistakes));
-        } else if (!checkLetterInWord && sumMistakes == 3) {
+            System.out.println("У вас осталось попыток: " + (6 - numberMistakes));
+        } else if (!checkLetterInWord && numberMistakes == 3) {
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
                     {'|', ' ', ' ', ' ', 'O', ' '},
@@ -212,8 +220,8 @@ public class Main {
                 }
                 System.out.println("");
             }
-            System.out.println("У вас осталось попыток: " + (6 - sumMistakes));
-        } else if (!checkLetterInWord && sumMistakes == 4) {
+            System.out.println("У вас осталось попыток: " + (6 - numberMistakes));
+        } else if (!checkLetterInWord && numberMistakes == 4) {
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
                     {'|', ' ', ' ', ' ', 'O', ' '},
@@ -228,8 +236,8 @@ public class Main {
                 }
                 System.out.println("");
             }
-            System.out.println("У вас осталось попыток: " + (6 - sumMistakes));
-        } else if (!checkLetterInWord && sumMistakes == 5) {
+            System.out.println("У вас осталось попыток: " + (6 - numberMistakes));
+        } else if (!checkLetterInWord && numberMistakes == 5) {
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
                     {'|', ' ', ' ', ' ', 'O', ' '},
@@ -244,8 +252,8 @@ public class Main {
                 }
                 System.out.println("");
             }
-            System.out.println("У вас осталось попыток: " + (6 - sumMistakes));
-        } else if (!checkLetterInWord && sumMistakes == 6) {                             // ПРОИГРАЛ !!!!!!!
+            System.out.println("У вас осталось попыток: " + (6 - numberMistakes));
+        } else if (!checkLetterInWord && numberMistakes == 6) {                             // ПРОИГРАЛ !!!!!!!
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
                     {'|', ' ', ' ', ' ', 'O', ' '},
@@ -290,12 +298,12 @@ public class Main {
         for (String x : secretWord) {
             System.out.print(x);
         }
-        System.out.println("");
+        System.out.println();
     }
 
     // обнулить введенные буквы и ошибки
     public static void resetLettersAndMistakes() {
-        sumMistakes = 0;
+        numberMistakes = 0;
         enteredLetters.delete(0, enteredLetters.length());
     }
 }
