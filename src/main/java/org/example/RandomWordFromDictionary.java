@@ -7,35 +7,35 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class WordFromDictionary {
-    public static Random random = new Random();
-    public static String randomWord;
+public class RandomWordFromDictionary {
+    final static Random random = new Random();
+
 
     private static File DICTIONARY;
+    private static List<String> dictionaryList;
 
 
     public static void getDictionary(){
         DICTIONARY = new File("dictionary");
     }
 
-    static List<String> createDictionaryList() {
+    static void createDictionaryList() {
         Scanner scanner = null;
         try {
             scanner = new Scanner(DICTIONARY);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Файл словоря не найден");
+            throw new RuntimeException(e);   //"Файл словоря не найден"
         }
 
-        List<String> dictionaryList = new ArrayList<>(); //words -> dictionaryList
+        dictionaryList = new ArrayList<>(); //words -> dictionaryList
         while (scanner.hasNext()) {
             dictionaryList.add(scanner.next());
         }
         scanner.close();
-            return dictionaryList;
     }
-    static void getRandomWord(List<String> dictionaryList){
+
+    static String getRandomWord(){
         int indexOfRandomWord = random.nextInt(dictionaryList.size());
-        randomWord = dictionaryList.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
-        //    return randomWord;
+            return dictionaryList.get(indexOfRandomWord).toUpperCase();
     }
 }

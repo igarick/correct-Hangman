@@ -1,95 +1,115 @@
 package org.example;
 
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
-public class Main {
-    public static Random random = new Random();
+public final class Main {
+
     public static Scanner scanner = new Scanner(System.in);
     private static String randomWord;
     private static int numberMistakes = 0;     //sumMistakes
-    private static String[] secretWord;
+
+    //private static String[] secretWord;
+    private static char[] secretWord;
+
     private static final StringBuilder enteredLetters = new StringBuilder();
 
     public static final char HIDDEN_LETTER = '*';
+    private final static String START = "Н";
+    private final static String QUIT = "В";
+    private final static String FIRST_LETTER = "А";
+    private final static String LAST_LETTER = "Я";
+    private final static String COMMAND_REGEX = "[%s%s]".formatted(START, QUIT);
 
+    private Main() {
+    }
 
-
-
-    public static void main(String[] args) throws FileNotFoundException {
-        do {
+    public static void main(String[] args) {
+        while (true) {
             System.out.println("(Н)ачать игру или (В)ыйти");
 
             String command = inputCommand(); //startOrEnd -> command
-            if (command.equals("В"))         //startOrEnd -> command
+            if (command.equals(QUIT)) {         //startOrEnd -> command
                 return;
+            }
 
             startGame();
 
-        } while (true);
+        }
     }
 
     // валидация ввода для start
     public static String inputCommand() {    //checkStartOrEnd() метод возвращает валидную команду, которую ввел юзер;
-        do {
+        while (true) {
             String command = scanner.next().toUpperCase(); //startOrEnd; название переменной - то что она хранит
-            if (!((command.length() == 1 && command.matches("[НВ]")))) {
-                System.out.println("Введите букву Н или В");
-            } else
+            if (!((command.length() == 1 && command.matches(COMMAND_REGEX)))) {        // command.matches("[НВ]")
+                System.out.printf("Введите букву %s или %s %n", START, QUIT);
+            } else {
                 return command;
-        } while (true);
+            }
+        }
     }
 
-    public static void startGame() throws FileNotFoundException {
+    public static void startGame() {
         System.out.println("Начало игры");
-        String word = getRandomWord();   //String newWord -> randomWord
+
+        RandomWordFromDictionary.getDictionary();
+        RandomWordFromDictionary.createDictionaryList();
+        randomWord = RandomWordFromDictionary.getRandomWord();
+
         setMaskWord();
         printMaskWord();
 
-        gameLoop(word);
+        gameLoop();
     }
 
+    //--------------------------------------------igo---------------------------------------------------------------------------------
     // получить новое слово
-    public static String getRandomWord() throws FileNotFoundException {    //getNewWord -> getRandomWord
-        File dictionaryPath = new File("dictionary"); //file -> dictionaryPath
-        Scanner scanner = new Scanner(dictionaryPath);
-
-        List<String> dictionaryList = new ArrayList<>(); //words -> dictionaryList
-        while (scanner.hasNext()) {
-            dictionaryList.add(scanner.next());
-        }
-        scanner.close();
-
-        int indexOfRandomWord = random.nextInt(dictionaryList.size());
-        randomWord = dictionaryList.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
-
-        return randomWord;
-    }
-
+//    public static String getRandomWord() throws FileNotFoundException {    //getNewWord -> getRandomWord
+//        File dictionaryPath = new File("dictionary"); //file -> dictionaryPath
+//        Scanner scanner = new Scanner(dictionaryPath);
+//
+//        List<String> dictionaryList = new ArrayList<>(); //words -> dictionaryList
+//        while (scanner.hasNext()) {
+//            dictionaryList.add(scanner.next());
+//        }
+//        scanner.close();
+//
+//        int indexOfRandomWord = random.nextInt(dictionaryList.size());
+//        randomWord = dictionaryList.get(indexOfRandomWord).toUpperCase();    //newWordNew -> randomWord
+//
+//        return randomWord;
+//    }
+//-----------------------------------------------------------------------------------------------------------------------------
     // зашифровать новое слово и вывести на экран
     public static void setMaskWord() {   //String newWord -> randomWord
-        secretWord = new String[randomWord.length()];
 
+
+        secretWord = new char[randomWord.length()];
         for (int i = 0; i < secretWord.length; i++) {
-            secretWord[i] = Character.toString(HIDDEN_LETTER);
+            secretWord[i] = HIDDEN_LETTER;
         }
+
+//        secretWord = new String[randomWord.length()];
+//
+//        for (int i = 0; i < secretWord.length; i++) {
+//            secretWord[i] = Character.toString(HIDDEN_LETTER);
+//        }
     }
 
-    public static void printMaskWord(){
-        for(String s : secretWord) {
-            System.out.print(s);
+    public static void printMaskWord() {
+        for (char c : secretWord) {
+            System.out.print(c);
         }
         System.out.println();
     }
 
     // game
-    public static void gameLoop(String newWord) {
+    public static void gameLoop() {
 
-        do {
-            String letter = inputLetter();   //newLetter -> letter
-            boolean check = checkLetterInRandomWord(letter);
+        while (true) {
+            char letter = inputLetter();   //newLetter -> letter
+            boolean check = isLetterInRandomWord(letter);
 
             countNumberMistakes(check);
             determineOccurrencesLetter(check, letter);
@@ -116,52 +136,55 @@ public class Main {
                 return;
             }
 
-        } while (true);
+        }
     }
 
     // валидация буквы
-    public static String inputLetter() {  //checkIsLetter;    метод получает букву от юзера
-        System.out.println("Введите одну букву от А до Я");
+    public static char inputLetter() {  //checkIsLetter;    метод получает букву от юзера
+        System.out.printf("Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
 
-        do {
+        while (true) {
             String letter = scanner.next().toUpperCase();    //newLetter
             if (!(letter.length() == 1 && letter.matches("[а-яА-Я]"))) {
-                System.out.println("Введите одну букву от А до Я");
+                System.out.printf("Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
             } else if (enteredLetters.toString().contains(letter)) {
-                System.out.println("Вы уже вводили эту букву. Введите одну букву от А до Я");
-            } else
-                return letter.toUpperCase();
-        } while (true);
+                System.out.printf("Вы уже вводили эту букву. Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
+            } else {
+                return (letter.toUpperCase()).charAt(0);
+            }
+        }
     }
 
     // запись введенных букв
-    public static void addLetter(String newLetter) {
+    public static void addLetter(char letter) {
         int length = enteredLetters.length();
         if (length == 0) {
-            enteredLetters.append(newLetter);
+            enteredLetters.append(letter);
             System.out.println("Вы ввели буквы: " + enteredLetters);
             System.out.println();
         } else {
             enteredLetters.append(", ");
-            enteredLetters.append(newLetter);
+            enteredLetters.append(letter);
             System.out.println("Вы ввели буквы: " + enteredLetters);
             System.out.println();
         }
     }
 
     // есть ли буква в слове
-    public static boolean checkLetterInRandomWord(String letter) { //String newLetter, String newWord, boolean checkLetterInWord
-        char a = letter.charAt(0);
+    public static boolean isLetterInRandomWord(char letter) { //String newLetter, String newWord, boolean checkLetterInWord
         for (char c : randomWord.toCharArray()) {
-            if (a == c) return true;
+            if (letter == c) {
+                return true;
+            }
         }
         return false;
     }
 
     //такой буквы нет
     public static void printIfNoLetter(boolean letterInWord) {    //printNoLetter
-        if (!letterInWord)
+        if (!letterInWord) {
             System.out.println("Такой буквы нет!");
+        }
     }
 
     // подсчет количества ошибок
@@ -272,31 +295,43 @@ public class Main {
     }
 
     // определить количество вхождений буквы в слово и их индекс
-    public static void determineOccurrencesLetter(boolean letterInWord, String enteredLetter) {
-        if (letterInWord) {
-            String[] arr = randomWord.split("");
-            for (int j = 0; j < arr.length; j++) {
-                if (enteredLetter.equals(arr[j]) && secretWord[j].equals("*")) {
-                    secretWord[j] = arr[j];
+    public static void determineOccurrencesLetter(boolean letterInSecretWord, char letter) {
+
+        if (letterInSecretWord) {
+            char[] arrRandomWord = randomWord.toCharArray();
+            for (int i = 0; i < arrRandomWord.length; i++) {
+                if (letter == arrRandomWord[i] && secretWord[i] == HIDDEN_LETTER) {
+                    secretWord[i] = arrRandomWord[i];
                 }
             }
         }
+
+
+//        if (letterInSecretWord) {
+//            String[] arrRandomWord = randomWord.split("");
+//            for (int j = 0; j < arrRandomWord.length; j++) {
+//                if (letter == arrRandomWord[j].charAt(0) && secretWord[j] == '*' {
+//                    secretWord[j] = arrRandomWord[j];
+//                }
+//            }
+//        }
     }
 
     //проверка угаданно ли слово
     public static boolean checkStateWord() {
         int sum = 0;
         for (int j = 0; j < secretWord.length; j++) {
-            if (secretWord[j].equals("*"))
+            if (secretWord[j] == HIDDEN_LETTER) {
                 sum++;
+            }
         }
         return (sum == 0);
     }
 
     // печатать слово
     public static void printWord() {
-        for (String x : secretWord) {
-            System.out.print(x);
+        for (char c : secretWord) {
+            System.out.print(c);
         }
         System.out.println();
     }
@@ -316,7 +351,8 @@ public class Main {
 2. Нарушение инкапсуляции, публичным должен быть только метод main.
     1. Т.е. все методы должны быть только static? в моем случае
     2.
-
+5. Нарушение DRY: ++ 16. Почему буквы тут это строки?
+    1. Почему буквы тут это строки?  но private final static !!!!String!!!! START = "Н";
 
      */
 
