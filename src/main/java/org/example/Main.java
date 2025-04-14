@@ -6,23 +6,19 @@ import java.util.*;
 public final class Main {
 
     public static Scanner scanner = new Scanner(System.in);
-    //private static String randomWord;
-    private static int numberMistakes = 0;     //sumMistakes
-
-    //private static String[] secretWord;
+    private static int numberMistakes = 0;
+    private final static int MAX_NUMBER_MISTAKES = 6;
+    private static char[] randomWord;
     private static char[] hiddenWord;
-
     private static final StringBuilder enteredLetters = new StringBuilder();
-
     public static final char HIDDEN_LETTER = '*';
     private final static String START = "Н";
     private final static String QUIT = "В";
+    private final static String COMMAND_REGEX = "[%s%s]".formatted(START, QUIT);
     private final static String FIRST_LETTER = "А";
     private final static String LAST_LETTER = "Я";
-    private final static String COMMAND_REGEX = "[%s%s]".formatted(START, QUIT);
-    private final static int MAX_NUMBER_MISTAKES = 6;
-    private final static int MIN_NUMBER_HIDDEN_LETTERS = 0;
-    private static char[] randomWord;
+        private final static String ALPHABET_REGEX = "[%s-%s]".formatted(FIRST_LETTER, LAST_LETTER);
+
 
     private Main() {
     }
@@ -84,33 +80,33 @@ public final class Main {
 
     public static void gameLoop() {
         while (!isGameOver()) {
-            char letter = inputLetter();   //1
-            boolean isWordLetter = isLetterInRandomWord(letter);    //2
+            char letter = inputLetter();
+            boolean isWordLetter = isLetterInRandomWord(letter);
 
-            if (!isWordLetter) {    //3
-                countNumberMistakes();      //  4
-                printNoLetter();  //8
+            if (!isWordLetter) {
+                countNumberMistakes();
+                printNoLetter();
 
-            } else { //5
-                revealMatchedLetters(letter);   //6
+            } else {
+                revealMatchedLetters(letter);
                 printYesLetter();
             }
 
-            printSecretWord();   //7
+            printHiddenWord();
 
-            printImageGallows(isWordLetter);    //9
+            printImageGallows(isWordLetter);
 
-            addLetter(letter);  //10
-            printEnteredLetters();  //11
+            addLetter(letter);
+            printEnteredLetters();
 
-            if (isWin()) {  //12
-                printWinMessage();  //13
-            } else if (isLose()) {  //14
-                printLoseMessage(); //15
+            if (isWin()) {
+                printWinMessage();
+            } else if (isLose()) {
+                printLoseMessage();
             }
         }
-        resetAddLettersAndMistakes();   //16
-        printRandomWord();  //17
+        resetAddLettersAndMistakes();
+        printRandomWord();
     }
 
     private static boolean isWin() {
@@ -140,11 +136,16 @@ public final class Main {
         return isWin() || isLose();
     }
 
-    static void printRandomWord() {
-        System.out.print("Загаданным было слово: ");
+    static String representRandomWordString() {     //printRandomWord
+        StringBuilder stringRandomWord = new StringBuilder();
         for (char c : randomWord) {
-            System.out.print(c);
+            stringRandomWord.append(c);
         }
+        return stringRandomWord.toString();
+    }
+
+    static void printRandomWord() {
+        System.out.print("Загаданным было слово: " + representRandomWordString());
         System.out.println();
     }
 
@@ -153,15 +154,25 @@ public final class Main {
 
         while (true) {
             String letter = scanner.next().toUpperCase();    //newLetter
-            if (!(letter.length() == 1 && letter.matches("[а-яА-Я]"))) {
+            if (!isOneLetterAlphabet(letter)) {
                 System.out.printf("Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
-            } else if (enteredLetters.toString().contains(letter)) {
+            } else if (isLetterRepeated(letter)) {
                 System.out.printf("Вы уже вводили эту букву. Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
             } else {
-                return (letter.toUpperCase()).charAt(0);
+                return letter.charAt(0);
             }
         }
     }
+
+    private static boolean isOneLetterAlphabet(String letter) {
+        return letter.length() == 1 && letter.matches(ALPHABET_REGEX);
+    }
+
+    private static boolean isLetterRepeated(String letter) {
+        return enteredLetters.toString().contains(letter);
+    }
+
+
 
     public static void addLetter(char letter) {
         int numberEnteredLetters = enteredLetters.length();
@@ -201,7 +212,7 @@ public final class Main {
     }
 
     public static void printYesLetter() {
-        System.out.println("Вы угалдали букву!");
+        System.out.println("Вы угадали букву!");
     }
 
     public static void countNumberMistakes() {
@@ -307,7 +318,7 @@ public final class Main {
         }
     }
 
-    public static void printSecretWord() {
+    public static void printHiddenWord() {
         for (char c : hiddenWord) {
             System.out.print(c);
         }
