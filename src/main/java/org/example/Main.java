@@ -17,7 +17,7 @@ public final class Main {
     private final static String COMMAND_REGEX = "[%s%s]".formatted(START, QUIT);
     private final static String FIRST_LETTER = "А";
     private final static String LAST_LETTER = "Я";
-        private final static String ALPHABET_REGEX = "[%s-%s]".formatted(FIRST_LETTER, LAST_LETTER);
+    private final static String ALPHABET_REGEX = "[%s-%s]".formatted(FIRST_LETTER, LAST_LETTER);
 
 
     private Main() {
@@ -66,19 +66,19 @@ public final class Main {
 
     }
 
-    public static void setMaskWord() {   //String newWord -> randomWord
+    static void setMaskWord() {   //String newWord -> randomWord
         hiddenWord = new char[randomWord.length];
         Arrays.fill(hiddenWord, HIDDEN_LETTER);
     }
 
-    public static void printMaskWord() {
+    static void printMaskWord() {
         for (char c : hiddenWord) {
             System.out.print(c);
         }
         System.out.println();
     }
 
-    public static void gameLoop() {
+    static void gameLoop() {
         while (!isGameOver()) {
             char letter = inputLetter();
             boolean isWordLetter = isLetterInRandomWord(letter);
@@ -94,9 +94,11 @@ public final class Main {
 
             printHiddenWord();
 
-            printImageGallows(isWordLetter);
+            //printImageGallows(isWordLetter);
+            Gallows.printGallows(numberMistakes-1);     // "-1" привести
 
-            addLetter(letter);
+
+            writeDownInputLetter(letter);
             printEnteredLetters();
 
             if (isWin()) {
@@ -105,7 +107,7 @@ public final class Main {
                 printLoseMessage();
             }
         }
-        resetAddLettersAndMistakes();
+        resetEnteredLettersAndMistakes();
         printRandomWord();
     }
 
@@ -136,27 +138,27 @@ public final class Main {
         return isWin() || isLose();
     }
 
-    static String representRandomWordString() {     //printRandomWord
-        StringBuilder stringRandomWord = new StringBuilder();
+    static String representStrRandomWord() {
+        StringBuilder strRandomWord = new StringBuilder();
         for (char c : randomWord) {
-            stringRandomWord.append(c);
+            strRandomWord.append(c);
         }
-        return stringRandomWord.toString();
+        return strRandomWord.toString();
     }
 
     static void printRandomWord() {
-        System.out.print("Загаданным было слово: " + representRandomWordString());
+        System.out.print("Загаданным было слово: " + representStrRandomWord());
         System.out.println();
     }
 
-    public static char inputLetter() {  //checkIsLetter;    метод получает букву от юзера
+    static char inputLetter() {
         System.out.printf("Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
 
         while (true) {
-            String letter = scanner.next().toUpperCase();    //newLetter
-            if (!isOneLetterAlphabet(letter)) {
+            String letter = scanner.next().toUpperCase();
+            if (!isSingleLetterAlphabet(letter)) {
                 System.out.printf("Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
-            } else if (isLetterRepeated(letter)) {
+            } else if (isLetterRepeat(letter)) {
                 System.out.printf("Вы уже вводили эту букву. Введите одну букву от %s до %s %n", FIRST_LETTER, LAST_LETTER);
             } else {
                 return letter.charAt(0);
@@ -164,17 +166,15 @@ public final class Main {
         }
     }
 
-    private static boolean isOneLetterAlphabet(String letter) {
+    private static boolean isSingleLetterAlphabet(String letter) {
         return letter.length() == 1 && letter.matches(ALPHABET_REGEX);
     }
 
-    private static boolean isLetterRepeated(String letter) {
+    private static boolean isLetterRepeat(String letter) {
         return enteredLetters.toString().contains(letter);
     }
 
-
-
-    public static void addLetter(char letter) {
+    static void writeDownInputLetter(char letter) {
         int numberEnteredLetters = enteredLetters.length();
         if (numberEnteredLetters > 0) {
             enteredLetters.append(", ");
@@ -182,11 +182,11 @@ public final class Main {
         enteredLetters.append(letter);
     }
 
-    private static void printEnteredLetters() {
+    static void printEnteredLetters() {
         System.out.printf("Вы ввели буквы: %s %n%n", enteredLetters);
     }
 
-    public static boolean isLetterInRandomWord(char letter) { //String newLetter, String newWord, boolean checkLetterInWord
+    private static boolean isLetterInRandomWord(char letter) { //String newLetter, String newWord, boolean checkLetterInWord
         for (char c : randomWord) {
             if (letter == c) {
                 return true;
@@ -195,7 +195,7 @@ public final class Main {
         return false;
     }
 
-    public static void revealMatchedLetters(char letter) {
+    static void revealMatchedLetters(char letter) {
         for (int i = 0; i < randomWord.length; i++) {
             if (isMatch(letter, i)) {
                 hiddenWord[i] = letter;
@@ -207,19 +207,19 @@ public final class Main {
         return randomWord[index] == letter;
     }
 
-    public static void printNoLetter() {
+    static void printNoLetter() {
         System.out.println("Такой буквы нет!");
     }
 
-    public static void printYesLetter() {
+    static void printYesLetter() {
         System.out.println("Вы угадали букву!");
     }
 
-    public static void countNumberMistakes() {
+    static void countNumberMistakes() {
         numberMistakes++;
     }
 
-    public static void printImageGallows(boolean checkLetterInWord) {
+    static void printImageGallows(boolean checkLetterInWord) {
         if (!checkLetterInWord && numberMistakes == 1) {
             char[][] missOne = {{'-', '-', '-', '-', '-', ' '},
                     {'|', '/', ' ', ' ', '|', ' '},
@@ -318,14 +318,14 @@ public final class Main {
         }
     }
 
-    public static void printHiddenWord() {
+    static void printHiddenWord() {
         for (char c : hiddenWord) {
             System.out.print(c);
         }
         System.out.println();
     }
 
-    public static void resetAddLettersAndMistakes() {
+    static void resetEnteredLettersAndMistakes() {
         numberMistakes = 0;
         enteredLetters.delete(0, enteredLetters.length());
     }

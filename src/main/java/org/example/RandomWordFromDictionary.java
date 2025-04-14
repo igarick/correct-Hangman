@@ -24,10 +24,10 @@ public class RandomWordFromDictionary {
         try {
             scanner = new Scanner(DICTIONARY);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);   //"Файл словоря не найден"
+            throw new RuntimeException("Словарь не найден!" + e);
         }
 
-        dictionaryList = new ArrayList<>(); //words -> dictionaryList
+        dictionaryList = new ArrayList<>();
         while (scanner.hasNext()) {
             dictionaryList.add(scanner.next());
         }
