@@ -55,7 +55,6 @@ public final class Main {
     static void startGame() {
         System.out.println("Начало игры \n");
 
-        RandomWordFromDictionary.getDictionary();
         RandomWordFromDictionary.createDictionaryList();
         randomWord = RandomWordFromDictionary.getRandomWord().toCharArray();
 

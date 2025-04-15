@@ -10,19 +10,15 @@ import java.util.Scanner;
 public class RandomWordFromDictionary {
     final static Random random = new Random();
 
-
-    private static File DICTIONARY;
     private static List<String> dictionaryList;
 
 
-    public static void getDictionary(){
-        DICTIONARY = new File("dictionary");
-    }
+    public static void createDictionaryList(){
+        File dictionary = new File("dictionary");
 
-    static void createDictionaryList() {
         Scanner scanner = null;
         try {
-            scanner = new Scanner(DICTIONARY);
+            scanner = new Scanner(dictionary);
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Словарь не найден!" + e);
         }
