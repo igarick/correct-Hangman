@@ -248,12 +248,17 @@ public final class Main {
 
     или оставить letter.matches("[А-Я]")?
 
-    2. использовать printf только когда предполагается "вставка значения"
+    2. Здесь 1 можно оставить или это будет магическим символом?
+    private static boolean isSingleLetterAlphabet(String letter) {
+        return letter.length() == 1 && letter.matches(ALPHABET_REGEX);
+    }
+
+    3. использовать printf только когда предполагается "вставка значения"
     или можно просто для "добавления" пустых строк
 
     System.out.printf("Увы, мой друг, Вы проиграли %n%n");
 
-    3. нужно ли метод упрощать (в классе RandomWordFromDictionary)
+    4. нужно ли метод упрощать (в классе RandomWordFromDictionary)
       static String getRandomWord(){
          int indexOfRandomWord = random.nextInt(dictionaryList.size());
              return dictionaryList.get(indexOfRandomWord).toUpperCase();
@@ -269,11 +274,10 @@ public final class Main {
         return random.nextInt(dictionaryList.size());
     }
 
-    4. чудовищный нейминг, всегда сомнения... в методе выше
+    5. чудовищный нейминг, всегда сомнения... в методе выше
 
         getIndexRandomWord() - получаю случайный индекс элемента из List в классе RandomWordFromDictionary,
         можно ли getRandomIndex ?
-
 
      */
 
