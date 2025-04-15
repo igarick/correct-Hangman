@@ -53,7 +53,7 @@ public final class Main {
     }
 
     static void startGame() {
-        System.out.println("Начало игры");
+        System.out.println("Начало игры \n");
 
         RandomWordFromDictionary.getDictionary();
         RandomWordFromDictionary.createDictionaryList();
@@ -149,7 +149,7 @@ public final class Main {
     }
 
     static void printNoLetter() {
-        System.out.println("Такой буквы нет!");
+        System.out.println("Такой буквы нет! \n");
     }
 
     static void printNumberRemainingAttempts() {
@@ -205,7 +205,7 @@ public final class Main {
     }
 
     static void printWinMessage() {
-        System.out.println("Вы выйграли");
+        System.out.println("Вы выйграли!");
         System.out.println();
     }
 
@@ -237,50 +237,6 @@ public final class Main {
         enteredLetters.delete(0, enteredLetters.length());
     }
 }
-
-    /*
-
-    1. нужно ли так "[%s-%s]"
-
-    private final static String FIRST_LETTER = "А";
-    private final static String LAST_LETTER = "Я";
-    private final static String ALPHABET_REGEX = "[%s-%s]".formatted(FIRST_LETTER, LAST_LETTER);
-
-    или оставить letter.matches("[А-Я]")?
-
-    2. Здесь 1 можно оставить или это будет магическим символом?
-    private static boolean isSingleLetterAlphabet(String letter) {
-        return letter.length() == 1 && letter.matches(ALPHABET_REGEX);
-    }
-
-    3. использовать printf только когда предполагается "вставка значения"
-    или можно просто для "добавления" пустых строк
-
-    System.out.printf("Увы, мой друг, Вы проиграли %n%n");
-
-    4. нужно ли метод упрощать (в классе RandomWordFromDictionary)
-      static String getRandomWord(){
-         int indexOfRandomWord = random.nextInt(dictionaryList.size());
-             return dictionaryList.get(indexOfRandomWord).toUpperCase();
-           }
-
-    до такого:
-
-     static String getRandomWord(){
-        return dictionaryList.get(getIndexRandomWord()).toUpperCase();
-    }
-
-    static int getIndexRandomWord() {
-        return random.nextInt(dictionaryList.size());
-    }
-
-    5. чудовищный нейминг, всегда сомнения... в методе выше
-
-        getIndexRandomWord() - получаю случайный индекс элемента из List в классе RandomWordFromDictionary,
-        можно ли getRandomIndex ?
-
-     */
-
 
 
 
