@@ -2,6 +2,7 @@ package org.example;
 
 public class Gallows {
     private static final String[] PICTURES = {"""
+                       -""","""
                        -------
                        |     |
                        |     O

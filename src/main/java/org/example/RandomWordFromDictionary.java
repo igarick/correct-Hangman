@@ -35,7 +35,10 @@ public class RandomWordFromDictionary {
     }
 
     static String getRandomWord(){
-        int indexOfRandomWord = random.nextInt(dictionaryList.size());
-            return dictionaryList.get(indexOfRandomWord).toUpperCase();
+        return dictionaryList.get(getIndexRandomWord()).toUpperCase();
+    }
+
+    static int getIndexRandomWord() {
+        return random.nextInt(dictionaryList.size());
     }
 }
